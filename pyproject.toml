@@ -24,7 +24,14 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = ["uvicorn", "fastapi", "spotipy", "pillow", "requests", "pydantic-settings"]
+dependencies = [
+  "uvicorn==0.35.0",
+  "fastapi==0.116.1",
+  "spotipy==2.25.1",
+  "pillow==11.3.0",
+  "requests==2.32.5",
+  "pydantic-settings==2.10.1",
+]
 
 [project.urls]
 Source = "https://github.com/beucismis/metalstats"
@@ -35,4 +42,5 @@ Documentation = "https://github.com/beucismis/metalstats#readme"
 path = "src/metalstats/__about__.py"
 
 [tool.hatch.envs.default.scripts]
+format = "black -l 120 ."
 metalstats = "uvicorn src.metalstats.main:app --reload"
