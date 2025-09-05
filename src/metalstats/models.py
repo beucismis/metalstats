@@ -1,3 +1,4 @@
+from os import environ as env
 from datetime import datetime
 from typing import Optional
 
@@ -7,8 +8,8 @@ from typing_extensions import Optional
 
 
 class Settings(BaseSettings):
-    SPOTIFY_CLIENT_ID: str
-    SPOTIFY_CLIENT_SECRET: str
+    SPOTIFY_CLIENT_ID: str = env["SPOTIFY_CLIENT_ID"]
+    SPOTIFY_CLIENT_SECRET: str = env["SPOTIFY_CLIENT_SECRET"]
     SPOTIFY_SCOPE: str = "user-top-read"
     SPOTIFY_REDIRECT_URI: str = "http://localhost:8000/callback"
 
