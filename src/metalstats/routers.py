@@ -32,18 +32,18 @@ async def callback(request: Request) -> JSONResponse:
     code = request.query_params.get("code")
 
     if not code:
-        return JSONResponse({"error": "Missing code"}, status_code=400)
+        return JSONResponse({"error": "Missing code!"}, status_code=400)
 
     token_info = spotify_oauth.get_access_token(code, as_dict=True)
     request.session["token_info"] = token_info
 
     return JSONResponse(
         content={
-            "access_token": token_info["access_token"],
             "expires_in": token_info["expires_in"],
-            "refresh_token": token_info.get("refresh_token"),
             "scope": token_info["scope"],
             "token_type": token_info["token_type"],
+            "refresh_token": token_info.get("refresh_token"),
+            "access_token": token_info["access_token"],
         }
     )
 
