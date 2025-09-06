@@ -4,7 +4,7 @@ API that turns your Spotify top tracks into a grid of album covers.
 
 <img height="500" src="https://github.com/user-attachments/assets/37e7fbc3-63e1-4e98-8220-bede52bf8d40" />
 
-## Environment Variables
+### Environment Variables
 
 To use the Spotify API, you **must set the following environment variables** before running the application (locally or in Docker):
 
@@ -24,7 +24,7 @@ pip install .
 uvicorn metalstats.main:app --reload
 ```
 
-## Running with Docker
+### Running with Docker
 
 ```
 git clone https://github.com/beucismis/metalstats
@@ -38,12 +38,12 @@ docker run -p 8000:8000 \
 
 ## Usage
 
-Once the service is running, you can access the API at http://localhost:8000.
+Once the service is running, you can access the API at `http://localhost:8000`.
 
-## Developer Notes
+### Developer Notes
 
 - The ASGI app is defined as `app` in `src/metalstats/main.py`.
-- When installed as a package, you can launch it using uvicorn, hypercorn, fastapi-cli, or any compatible ASGI tool.
+- When installed as a package, you can launch it using `uvicorn`, `hypercorn`, `fastapi-cli`, or any compatible ASGI tool.
 
 ## License
 
