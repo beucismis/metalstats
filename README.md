@@ -8,10 +8,11 @@ API that turns your Spotify top tracks into a grid of album covers.
 
 To use the Spotify API, you **must set the following environment variables** before running the application (locally or in Docker):
 
-| Variable                | Description                  |
-|-------------------------|------------------------------|
-| `SPOTIFY_CLIENT_ID`     | Your Spotify client ID       |
-| `SPOTIFY_CLIENT_SECRET` | Your Spotify client secret   |
+| Variable                | Description                  | Default Value                  |
+|-------------------------|------------------------------|--------------------------------|
+| `SPOTIFY_CLIENT_ID`     | Your Spotify client ID       | None                           |
+| `SPOTIFY_CLIENT_SECRET` | Your Spotify client secret   | None                           |
+| `SPOTIFY_REDIRECT_URI`  | Your Spotify redirect uri    | http://localhost:8000/callback |
 
 You can set these variables directly in your shell or via Docker as shown below.
 
@@ -33,6 +34,7 @@ docker build -t metalstats .
 docker run -p 8000:8000 \
   -e SPOTIFY_CLIENT_ID=your_client_id \
   -e SPOTIFY_CLIENT_SECRET=your_client_secret \
+  -e SPOTIFY_REDIRECT_URI=your_redirect_url \
   metalstats
 ```
 
