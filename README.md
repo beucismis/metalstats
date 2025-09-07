@@ -47,9 +47,7 @@ Once the service is running, you can access the API at `http://localhost:8000`.
 
 - The ASGI app is defined as `app` in `src/metalstats/main.py`.
 - When installed as a package, you can launch it using `uvicorn`, `hypercorn`, `fastapi-cli`, or any compatible ASGI tool.
-
-- The `METALSTATS_FRONTEND_URL` environment variable is used to redirect users to the frontend after Spotify OAuth login.
-- If not set, the `/callback` endpoint returns a JSON message.
+- The `METALSTATS_FRONTEND_URL` environment variable is used to redirect users to the frontend after Spotify OAuth login. If not set, the `/callback` endpoint returns a JSON message.
 
 ## License
 
