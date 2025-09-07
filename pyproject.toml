@@ -45,3 +45,4 @@ path = "src/metalstats/__about__.py"
 
 [tool.hatch.envs.default.scripts]
 format = "black -l 120 ."
+dev = "uvicorn src.metalstats.main:app --reload"
