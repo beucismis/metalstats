@@ -8,11 +8,12 @@ API that turns your Spotify top tracks into a grid of album covers.
 
 To use the Spotify API, you **must set the following environment variables** before running the application (locally or in Docker):
 
-| Variable                | Description                  | Default Value                  |
-|-------------------------|------------------------------|--------------------------------|
-| `SPOTIFY_CLIENT_ID`     | Your Spotify client ID       | None                           |
-| `SPOTIFY_CLIENT_SECRET` | Your Spotify client secret   | None                           |
-| `SPOTIFY_REDIRECT_URI`  | Your Spotify redirect uri    | http://localhost:8000/callback |
+| Variable                  | Description                  | Default Value                    |
+|---------------------------|------------------------------|----------------------------------|
+| `SPOTIFY_CLIENT_ID`       | Your Spotify client ID       |                                  |
+| `SPOTIFY_CLIENT_SECRET`   | Your Spotify client secret   |                                  |
+| `SPOTIFY_REDIRECT_URI`    | Your Spotify redirect uri    | `http://localhost:8000/callback` |
+| `METALSTATS_FRONTEND_URL` | Your metalstats frontend url | `None`                           |
 
 You can set these variables directly in your shell or via Docker as shown below.
 
@@ -34,7 +35,7 @@ docker build -t metalstats .
 docker run -p 8000:8000 \
   -e SPOTIFY_CLIENT_ID=your_client_id \
   -e SPOTIFY_CLIENT_SECRET=your_client_secret \
-  -e SPOTIFY_REDIRECT_URI=your_redirect_url \
+  -e SPOTIFY_REDIRECT_URI=your_redirect_uri \
   metalstats
 ```
 
@@ -46,6 +47,9 @@ Once the service is running, you can access the API at `http://localhost:8000`.
 
 - The ASGI app is defined as `app` in `src/metalstats/main.py`.
 - When installed as a package, you can launch it using `uvicorn`, `hypercorn`, `fastapi-cli`, or any compatible ASGI tool.
+
+- The `METALSTATS_FRONTEND_URL` environment variable is used to redirect users to the frontend after Spotify OAuth login.
+- If not set, the `/callback` endpoint returns a JSON message.
 
 ## License
 
