@@ -9,7 +9,7 @@ from fastapi import Query, Request
 from PIL import Image, ImageDraw, ImageFont
 from spotipy.oauth2 import SpotifyOAuth
 
-from metalstats import models
+from src.metalstats import models
 
 
 settings = models.Settings()
@@ -91,9 +91,10 @@ def build_grid_template(spotify: spotipy.Spotify, params: models.TopItemsRequest
     types_to_process = [params.type] if params.type != "all" else ["tracks", "artists", "albums"]
 
     for type in types_to_process:
-        if ttype not in type_handlers:
+        if type not in type_handlers:
             continue
-        items = type_handlers[type](spotify, params)
+
+        items = list(type_handlers[type](spotify, params))
 
         for item in items:
             if type == "tracks":

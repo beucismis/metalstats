@@ -6,27 +6,27 @@ import spotipy
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import JSONResponse, RedirectResponse, StreamingResponse
 
-from metalstats import models, utils
+from src.metalstats import models, utils
 
 
 api = APIRouter()
 settings = models.Settings()
 
 
-@api.get("/login")
+@api.get("/login",  response_class=RedirectResponse)
 async def login() -> RedirectResponse:
     spotify_oauth = utils.get_spotify_oauth()
     auth_url = spotify_oauth.get_authorize_url()
     return RedirectResponse(auth_url)
 
 
-@api.get("/logout")
+@api.get("/logout", response_class=JSONResponse)
 async def logout(request: Request) -> JSONResponse:
     request.session.clear()
     return JSONResponse({"message": "Logged out successfully"})
 
 
-@api.get("/callback")
+@api.get("/callback", response_model=None)
 async def callback(request: Request) -> Union[RedirectResponse, JSONResponse]:
     code = request.query_params.get("code")
 
@@ -43,7 +43,7 @@ async def callback(request: Request) -> Union[RedirectResponse, JSONResponse]:
         return JSONResponse({"message": "Spotify login successful. Token saved in session."})
 
 
-@api.get("/top")
+@api.get("/top", response_class=JSONResponse)
 async def top(request: Request, params: models.TopItemsRequest = Depends(utils.top_items_query)) -> JSONResponse:
     token_info = request.session.get("token_info")
 
@@ -62,12 +62,12 @@ async def top(request: Request, params: models.TopItemsRequest = Depends(utils.t
     for type in top_handlers.keys():
         if params.type in (type, "all"):
             handler = top_handlers[type]
-            data[type] = handler(spotify, params)
+            data[type] = list(handler(spotify, params))
 
     return JSONResponse(content=data)
 
 
-@api.get("/top-grid")
+@api.get("/top-grid", response_model=None)
 async def top_grid(
     request: Request, params: models.TopItemsRequest = Depends(utils.top_items_query)
 ) -> Union[JSONResponse, StreamingResponse]:
