@@ -1,10 +1,9 @@
-from os import environ as env
 from datetime import datetime
+from os import environ as env
 from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
 from pydantic_settings import BaseSettings
-from typing_extensions import Optional
 
 
 class Settings(BaseSettings):
@@ -12,6 +11,7 @@ class Settings(BaseSettings):
     SPOTIFY_CLIENT_SECRET: str = env["SPOTIFY_CLIENT_SECRET"]
     SPOTIFY_SCOPE: str = "user-top-read"
     SPOTIFY_REDIRECT_URI: str = env.get("SPOTIFY_REDIRECT_URI", "http://localhost:8000/callback")
+    METALSTATS_FRONTEND_URL: Optional[str] = env.get("METALSTATS_FRONTEND_URL", None)
 
 
 class GridSettings(BaseSettings):
@@ -52,13 +52,13 @@ class TopItemsRequest(BaseModel):
     limit: int = Field(10, ge=1, le=50)
 
     @field_validator("type")
-    def valid_type(cls, v):
+    def valid_type(cls, v) -> str:
         if v not in ["tracks", "artists", "albums"]:
             raise ValueError("type must be one of: tracks, artists, albums")
         return v
 
     @field_validator("time_range")
-    def valid_time_range(cls, v):
+    def valid_time_range(cls, v) -> str:
         if v not in ["short_term", "medium_term", "long_term"]:
             raise ValueError("time_range must be one of: short_term, medium_term, long_term")
         return v

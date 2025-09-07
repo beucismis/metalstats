@@ -7,9 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 from starlette.middleware.sessions import SessionMiddleware
 
-from . import routers
-from .models import HealthCheck
-from .__about__ import __version__
+from metalstats import __about__, models, routers
 
 
 app = FastAPI()
@@ -27,15 +25,15 @@ app.add_middleware(
 )
 
 
-@app.get("/", response_class=HTMLResponse)
-async def home() -> HTMLResponse:
+@app.get("/")
+async def home_sweet_home() -> HTMLResponse:
     return HTMLResponse("Hello, World!")
 
 
-@app.get("/healthcheck", response_class=JSONResponse)
-async def healthcheck() -> HealthCheck:
-    return HealthCheck(
+@app.get("/healthcheck")
+async def healthcheck() -> models.HealthCheck:
+    return models.HealthCheck(
         status="healthy",
-        version=__version__,
+        version=__about__.__version__,
         timestamp=datetime.now(UTC),
     )

@@ -1,125 +1,84 @@
 import json
 from io import BytesIO
-from typing import Any
+from typing import Any, Union
 
 import spotipy
-from fastapi import APIRouter, Depends, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import JSONResponse, RedirectResponse, StreamingResponse
 
-from .models import Album, Artist, GridTemplate, TopItemsRequest, Track
-from .utils import create_grid_image, get_spotify_oauth, top_items_query
+from metalstats import models, utils
 
 
 api = APIRouter()
+settings = models.Settings()
 
 
-@api.get("/login", response_class=JSONResponse)
-async def login() -> JSONResponse:
-    spotify_oauth = get_spotify_oauth()
+@api.get("/login")
+async def login() -> RedirectResponse:
+    spotify_oauth = utils.get_spotify_oauth()
     auth_url = spotify_oauth.get_authorize_url()
-    return JSONResponse(content={"auth_url": auth_url})
+    return RedirectResponse(auth_url)
 
 
-@api.get("/logout", response_class=RedirectResponse)
-async def logout(request: Request) -> RedirectResponse:
+@api.get("/logout")
+async def logout(request: Request) -> JSONResponse:
     request.session.clear()
-    return RedirectResponse("/")
+    return JSONResponse({"message": "Logged out successfully"})
 
 
-@api.get("/callback", response_class=JSONResponse)
-async def callback(request: Request) -> JSONResponse:
-    spotify_oauth = get_spotify_oauth()
+@api.get("/callback")
+async def callback(request: Request) -> Union[RedirectResponse, JSONResponse]:
     code = request.query_params.get("code")
 
-    if not code:
-        return JSONResponse({"error": "Missing code!"}, status_code=400)
+    if code is None:
+        return JSONResponse({"error": "No code provided"}, status_code=400)
 
+    spotify_oauth = utils.get_spotify_oauth()
     token_info = spotify_oauth.get_access_token(code, as_dict=True)
     request.session["token_info"] = token_info
 
-    return JSONResponse(
-        content={
-            "expires_in": token_info["expires_in"],
-            "scope": token_info["scope"],
-            "token_type": token_info["token_type"],
-            "refresh_token": token_info.get("refresh_token"),
-            "access_token": token_info["access_token"],
-        }
-    )
+    if settings.METALSTATS_FRONTEND_URL:
+        return RedirectResponse(settings.METALSTATS_FRONTEND_URL)
+    else:
+        return JSONResponse({"message": "Spotify login successful. Token saved in session."})
 
 
-@api.get("/top", response_class=JSONResponse)
-async def top(request: Request, params: TopItemsRequest = Depends(top_items_query)) -> Any:
+@api.get("/top")
+async def top(request: Request, params: models.TopItemsRequest = Depends(utils.top_items_query)) -> JSONResponse:
     token_info = request.session.get("token_info")
 
     if not token_info:
-        return RedirectResponse("/")
+        return JSONResponse({"error": "Not authenticated. Please login first."}, status_code=401)
 
     data = {}
-    spotify = spotipy.Spotify(auth=token_info["access_token"])
+    top_handlers = {
+        "tracks": utils.get_top_tracks,
+        "artists": utils.get_top_artists,
+        "albums": utils.get_top_albums,
+    }
 
-    if params.type in ("tracks"):
-        top_tracks = spotify.current_user_top_tracks(limit=params.limit, time_range=params.time_range)
-        data["tracks"] = [
-            Track(
-                artist_name=t["artists"][0]["name"],
-                song_name=t["name"],
-                album_cover_url=t["album"]["images"][0]["url"],
-            ).model_dump()
-            for t in top_tracks["items"]
-        ]
+    spotify = utils.get_spotify_client(request)
 
-    if params.type in ("artists"):
-        top_artists = spotify.current_user_top_artists(limit=params.limit, time_range=params.time_range)
-        data["artists"] = [
-            Artist(
-                name=a["name"],
-                image_url=a["images"][0]["url"],
-            ).model_dump()
-            for a in top_artists["items"]
-        ]
-
-    if params.type in ("albums"):
-        top_tracks = spotify.current_user_top_tracks(limit=params.limit, time_range=params.time_range)
-        data["albums"] = [
-            Album(
-                artist_name=t["artists"][0]["name"],
-                name=t["album"]["name"],
-                cover_url=t["album"]["images"][0]["url"],
-            ).model_dump()
-            for t in top_tracks["items"]
-        ]
+    for type in top_handlers.keys():
+        if params.type in (type, "all"):
+            handler = top_handlers[type]
+            data[type] = handler(spotify, params)
 
     return JSONResponse(content=data)
 
 
-@api.get("/top-grid", response_class=StreamingResponse)
-async def top_grid(request: Request, params: TopItemsRequest = Depends(top_items_query)):
+@api.get("/top-grid")
+async def top_grid(
+    request: Request, params: models.TopItemsRequest = Depends(utils.top_items_query)
+) -> Union[JSONResponse, StreamingResponse]:
     token_info = request.session.get("token_info")
 
     if not token_info:
-        return RedirectResponse("/")
+        return JSONResponse({"error": "Not authenticated. Please login first."}, status_code=401)
 
-    grid_template = []
-    top_data = await top(request, params)
-    top_data = json.loads(top_data.body.decode())
-
-    if params.type in ("tracks"):
-        for track in top_data["tracks"]:
-            title = track["artist_name"] + " - " + track["song_name"]
-            grid_template.append(GridTemplate(title=title, image_url=track["album_cover_url"]))
-
-    if params.type in ("artists"):
-        for artist in top_data["artists"]:
-            title = artist["name"]
-            grid_template.append(GridTemplate(title=title, image_url=artist["image_url"]))
-
-    if params.type in ("albums"):
-        for album in top_data["albums"]:
-            title = album["artist_name"] + " - " + album["name"]
-            grid_template.append(GridTemplate(title=title, image_url=album["cover_url"]))
-
-    image = create_grid_image(grid_template)
+    spotify = utils.get_spotify_client(request)
+    grid_template = utils.build_grid_template(spotify, params)
+    image = utils.create_grid_image(grid_template)
 
     buffer = BytesIO()
     image.save(buffer, format="JPEG")
