@@ -13,9 +13,10 @@ from src.metalstats import __about__, models, routers
 app = FastAPI()
 app.include_router(routers.api)
 
-origins = [ 
-    "https://beucismis.github.io/metalstats-frontend",
-]
+settings = models.Settings()
+
+origins = []
+origins.append(settings.METALSTATS_FRONTEND_URL)
 
 app.add_middleware(
     CORSMiddleware,
