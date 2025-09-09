@@ -15,7 +15,7 @@ app.include_router(routers.api)
 
 settings = models.Settings()
 
-origins = []
+origins = ["https://beucismis.github.io"]
 origins.append(settings.METALSTATS_FRONTEND_URL)
 
 app.add_middleware(
