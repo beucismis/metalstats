@@ -23,7 +23,16 @@ async def login() -> RedirectResponse:
 @api.get("/logout", response_class=JSONResponse)
 async def logout(request: Request) -> JSONResponse:
     request.session.clear()
-    return JSONResponse({"message": "Logged out successfully"})
+    return JSONResponse({"message": "Logged out successfully."})
+
+
+@api.get("/auth-status", response_class=JSONResponse)
+async def auth_status(request: Request) -> dict:
+    token_info = request.session.get("token_info")
+
+    if token_info:
+        return {"logged_in": True, "message": "Spotify login successful."}
+    return {"logged_in": False, "message": "Not logged in."}
 
 
 @api.get("/callback", response_model=None)
@@ -31,7 +40,7 @@ async def callback(request: Request) -> Union[RedirectResponse, JSONResponse]:
     code = request.query_params.get("code")
 
     if code is None:
-        return JSONResponse({"error": "No code provided"}, status_code=400)
+        return JSONResponse({"error": "No code provided."}, status_code=400)
 
     spotify_oauth = utils.get_spotify_oauth()
     token_info = spotify_oauth.get_access_token(code, as_dict=True)
