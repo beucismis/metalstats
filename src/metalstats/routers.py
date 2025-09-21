@@ -13,17 +13,17 @@ api = APIRouter()
 settings = models.Settings()
 
 
-@api.get("/login",  response_class=RedirectResponse)
+@api.get("/login", response_class=RedirectResponse)
 async def login() -> RedirectResponse:
     spotify_oauth = utils.get_spotify_oauth()
     auth_url = spotify_oauth.get_authorize_url()
     return RedirectResponse(auth_url)
 
 
-@api.get("/logout", response_class=JSONResponse)
-async def logout(request: Request) -> JSONResponse:
+@api.get("/logout", response_class=RedirectResponse)
+async def logout(request: Request) -> RedirectResponse:
     request.session.clear()
-    return JSONResponse({"message": "Logged out successfully."})
+    return RedirectResponse(url="/")
 
 
 @api.get("/auth-status", response_class=JSONResponse)
@@ -49,7 +49,7 @@ async def callback(request: Request) -> Union[RedirectResponse, JSONResponse]:
     if settings.METALSTATS_FRONTEND_URL:
         return RedirectResponse(settings.METALSTATS_FRONTEND_URL)
     else:
-        return JSONResponse({"message": "Spotify login successful. Token saved in session."})
+        return RedirectResponse(url="/")
 
 
 @api.get("/top", response_class=JSONResponse)
