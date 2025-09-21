@@ -1,0 +1,22 @@
+#grid-container {
+    margin-top: 1rem;
+}
+
+.loader {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-top: 1rem;
+    border: 3px solid white;
+    border-top: 3px solid black;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
