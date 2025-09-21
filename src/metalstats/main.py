@@ -5,24 +5,22 @@ import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 
 from src.metalstats import __about__, models, routers
 
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="src/metalstats/static"), name="static")
 app.include_router(routers.api)
-
-settings = models.Settings()
-
-origins = ["https://beucismis.github.io"]
-origins.append(settings.METALSTATS_FRONTEND_URL)
 
 app.add_middleware(
     CORSMiddleware,
     allow_methods=["*"],
     allow_headers=["*"],
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
 )
 app.add_middleware(
@@ -30,14 +28,12 @@ app.add_middleware(
     secret_key=secrets.token_hex(32),
 )
 
+templates = Jinja2Templates(directory="src/metalstats/templates")
+
 
 @app.get("/", response_class=HTMLResponse)
 async def home_sweet_home(request: Request) -> HTMLResponse:
-    return HTMLResponse(
-        f"<b>metalstats</b> - {__about__.__description__} </br>"
-        f'Docs: <a href="{request.base_url}docs">{request.base_url}docs</a> </br>'
-        f'Source: <a href="{__about__.__source__}">{__about__.__source__}</a>'
-    )
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 @app.get("/healthcheck", response_class=JSONResponse)
