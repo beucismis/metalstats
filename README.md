@@ -1,6 +1,6 @@
 # metalstats
 
-API that turns your Spotify top tracks into a grid of album covers.
+Create a Topster-style canvas of your top Spotify music.
 
 <img height="500" src="https://github.com/user-attachments/assets/37e7fbc3-63e1-4e98-8220-bede52bf8d40" />
 
@@ -13,7 +13,7 @@ To use the Spotify API, you **must set the following environment variables** bef
 | `SPOTIFY_CLIENT_ID`       | Your Spotify client ID       |                                  |
 | `SPOTIFY_CLIENT_SECRET`   | Your Spotify client secret   |                                  |
 | `SPOTIFY_REDIRECT_URI`    | Your Spotify redirect uri    | `http://localhost:8000/callback` |
-| `METALSTATS_FRONTEND_URL` | Your metalstats frontend url | `None`                           |
+| `METALSTATS_DATA_DIR` | Bla bla bla | `None` |
 
 You can set these variables directly in your shell or via Docker as shown below.
 
@@ -36,6 +36,7 @@ docker run -p 8000:8000 \
   -e SPOTIFY_CLIENT_ID=your_client_id \
   -e SPOTIFY_CLIENT_SECRET=your_client_secret \
   -e SPOTIFY_REDIRECT_URI=your_redirect_uri \
+  -e METALSTATS_DATA_DIR=your_data_dir \
   metalstats
 ```
 
