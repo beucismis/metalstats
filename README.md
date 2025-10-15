@@ -13,7 +13,7 @@ To use the Spotify API, you **must set the following environment variables** bef
 | `SPOTIFY_CLIENT_ID`       | Your Spotify client ID       |                                  |
 | `SPOTIFY_CLIENT_SECRET`   | Your Spotify client secret   |                                  |
 | `SPOTIFY_REDIRECT_URI`    | Your Spotify redirect uri    | `http://localhost:8000/callback` |
-| `METALSTATS_DATA_DIR` | Bla bla bla | `None` |
+| `METALSTATS_DATA_DIR`     | Your data directory          | `data/`                          |
 
 You can set these variables directly in your shell or via Docker as shown below.
 
@@ -48,7 +48,6 @@ Once the service is running, you can access the API at `http://localhost:8000`.
 
 - The ASGI app is defined as `app` in `src/metalstats/main.py`.
 - When installed as a package, you can launch it using `uvicorn`, `hypercorn`, `fastapi-cli`, or any compatible ASGI tool.
-- The `METALSTATS_FRONTEND_URL` environment variable is used to redirect users to the frontend after Spotify OAuth login. If not set, the `/callback` endpoint returns a JSON message.
 
 ## License
 
