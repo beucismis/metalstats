@@ -1,20 +1,22 @@
+import os
 from datetime import datetime
-from os import environ as env
-from typing import Optional
+from typing import ClassVar, Optional
 
 from pydantic import BaseModel, Field, field_validator
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    SPOTIFY_CLIENT_ID: str = env["SPOTIFY_CLIENT_ID"]
-    SPOTIFY_CLIENT_SECRET: str = env["SPOTIFY_CLIENT_SECRET"]
     SPOTIFY_SCOPE: str = "user-top-read"
-    SPOTIFY_REDIRECT_URI: str = env.get("SPOTIFY_REDIRECT_URI", "http://localhost:8000/callback")
-    METALSTATS_FRONTEND_URL: Optional[str] = env.get("METALSTATS_FRONTEND_URL", None)
+    SPOTIFY_CLIENT_ID: str = os.environ["SPOTIFY_CLIENT_ID"]
+    SPOTIFY_CLIENT_SECRET: str = os.environ["SPOTIFY_CLIENT_SECRET"]
+    SPOTIFY_REDIRECT_URI: str = os.environ.get("SPOTIFY_REDIRECT_URI", "http://localhost:8000/callback")
+    DATA_DIR: ClassVar[str] = os.environ.get("METALSTATS_DATA_DIR", "data/")
+    DB_FILE: ClassVar[str] = os.path.join(DATA_DIR, "app.db")
+    IMAGES_DIR: ClassVar[str] = os.path.join(DATA_DIR, "images/")
 
 
-class GridSettings(BaseSettings):
+class CanvasSettings(BaseSettings):
     PADDING: int = 10
     COVERS_PER_ROW: int = 5
     COVER_SIZE: tuple = (200, 200)
@@ -24,7 +26,7 @@ class GridSettings(BaseSettings):
     FONT_FILENAME: str = "LiberationMono-Regular.ttf"
 
 
-class GridTemplate(BaseSettings):
+class CanvasItem(BaseSettings):
     title: str = Field()
     image_url: Optional[str] = Field()
 
@@ -32,6 +34,7 @@ class GridTemplate(BaseSettings):
 class Track(BaseModel):
     artist_name: str = Field()
     song_name: str = Field()
+    album_name: str = Field()
     album_cover_url: Optional[str] = Field()
 
 
@@ -68,3 +71,10 @@ class HealthCheck(BaseModel):
     status: str = Field()
     version: str = Field()
     timestamp: datetime = Field()
+
+
+class ShareRequest(BaseModel):
+    type: str
+    time_range: str
+    limit: int
+    share_anonymously: bool
