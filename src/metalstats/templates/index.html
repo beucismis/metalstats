@@ -1,81 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>metalstats - Create a grid of your top Spotify albums</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-    <h1>metalstats</h1>
-    <p>Turn your Spotify top tracks, artists, or albums into a grid of album covers.</p>
-    <div>
-        <a id="auth-status"></a>
-        <a href="/">About</a>
-    </div>
-    <div id="grid-generator">
-        <p>Select your preferences and click "Generate Grid" to create your image.</p>
-        <form id="grid-form">
-            <label for="type">Type:</label>
-            <select name="type" id="type">
-                <option value="albums">Albums</option>
-                <option value="tracks">Tracks</option>
-                <option value="artists">Artists</option>
-            </select>
-            <label for="time_range">Time Range:</label>
-            <select name="time_range" id="time_range">
-                <option value="short_term">Last 4 weeks</option>
-                <option value="medium_term">Last 6 months</option>
-                <option value="long_term">All time</option>
-            </select>
-            <label for="limit">Limit:</label>
-            <input type="number" name="limit" id="limit" value="10" min="1" max="50">
-            <button type="submit">Generate Grid</button>
-        </form>
-        <div id="grid-container"></div>
-    </div>
-    <script>
-        fetch('/auth-status')
-            .then(response => response.json())
-            .then(data => {
-                const authStatusDiv = document.getElementById('auth-status');
-                const gridGeneratorDiv = document.getElementById('grid-generator');
-                if (data.logged_in) {
-                    authStatusDiv.innerHTML = `<a href="/logout">Logout</a>`;
-                    gridGeneratorDiv.style.display = 'block';
-                } else {
-                    authStatusDiv.innerHTML = '<a href="/login">Login with Spotify</a>';
-                    gridGeneratorDiv.style.display = 'none';
-                }
-            });
-
-        document.getElementById('grid-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const form = event.target;
-            const type = form.type.value;
-            const time_range = form.time_range.value;
-            const limit = form.limit.value;
-            const gridContainer = document.getElementById('grid-container');
-            gridContainer.innerHTML = '<div class="loader"></div>';
-
-            const url = `/top-grid?type=${type}&time_range=${time_range}&limit=${limit}`;
-
-            fetch(url)
-                .then(response => {
-                    if (response.ok) {
-                        return response.blob();
-                    }
-                    throw new Error('Failed to generate grid. Please try again.');
-                })
-                .then(blob => {
-                    const imageUrl = URL.createObjectURL(blob);
-                    gridContainer.innerHTML = `<img src="${imageUrl}" alt="Top Grid">`;
-                })
-                .catch(error => {
-                    gridContainer.innerHTML = `<p style="color: red;">${error.message}</p>`;
-                });
-        });
-    </script>
-    <script defer data-domain="metalstats.beucismis.org" src="https://vince.beucismis.org/js/script.js"></script>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}MetalStats - Create a Topster-style canvas of your top Spotify music{% endblock %}
+{% block main %}
+    <div class="container">
+        <div id="login-prompt" style="display: none; margin-top: 1rem; margin-bottom: 1rem;">
+            <p>You need to login first to create a canvas.</p>
+        </div>
+        <div id="canvas-generator">
+        <p>Select your preferences and click "Generate Canvas" to create your image.</p>
+            <form id="canvas-form">
+                <label for="type">Type:</label>
+                <select name="type" id="type">
+                    <option value="albums">Albums</option>
+                    <option value="tracks">Tracks</option>
+                    <option value="artists">Artists</option>
+                </select>
+                <label for="time_range">Time Range:</label>
+                <select name="time_range" id="time_range">
+                    <option value="short_term">Last 4 weeks</option>
+                    <option value="medium_term">Last 6 months</option>
+                    <option value="long_term">All time</option>
+                </select>
+                <label for="limit">Limit:</label>
+                <input type="number" name="limit" id="limit" value="10" min="1" max="50">
+                <br/>
+                <button class="action-button" type="submit">Generate Canvas</button>
+            </form>
+            <div id="canvas-container"></div>
+            <div id="share-controls" style="display: none; margin-top: 1rem;">
+                <input type="checkbox" id="anonymous-share">
+                <label for="anonymous-share">Anonymously</label>
+                </br>
+                <button type="button" id="share-button" class="action-button" style="margin-left: 10px;">Share to Showcase</button>
+                <p id="share-status"></p>
+            </div>
+</div>
+{% endblock %}

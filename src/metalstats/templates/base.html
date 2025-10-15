@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="tr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}" />
+        <link rel="icon" href="{{ url_for('static', path='favicon.png') }}" />
+        <title>
+            {% block title %}{% endblock %}
+        </title>
+    </head>
+    <body>
+        <header>
+            <h1 class="title">MetalStats</h1>
+            <div class="description">Create a Topster-style canvas of your top Spotify music.</div>
+            <nav>
+                <a href="{{ url_for("home_sweet_home") }}">Home</a>
+                <a id="auth-status">Login with Spotify</a>
+                <a href="{{ url_for("showcase") }}">Showcase</a>
+                <a href="{{ url_for("about") }}">About</a>
+            </nav>
+        </header>
+        <main>
+            {% block main %}{% endblock %}
+        </main>
+        <footer>
+        </footer>
+        <script src="{{ url_for('static', path='script.js') }}" defer></script>
+    </body>
+</html>
