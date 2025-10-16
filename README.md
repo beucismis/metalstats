@@ -32,11 +32,12 @@ uvicorn metalstats.main:app --reload
 git clone https://github.com/beucismis/metalstats
 cd metalstats/
 docker build -t metalstats .
-docker run -p 8000:8000 \
-  -e SPOTIFY_CLIENT_ID=your_client_id \
-  -e SPOTIFY_CLIENT_SECRET=your_client_secret \
-  -e SPOTIFY_REDIRECT_URI=your_redirect_uri \
-  -e METALSTATS_DATA_DIR=your_data_dir \
+docker run -d \
+  -p 8000:8000 \
+  -e SPOTIFY_CLIENT_ID="spotify_client_id" \
+  -e SPOTIFY_CLIENT_SECRET="spotify_client_secret" \
+  -e SPOTIFY_REDIRECT_URI="spotify_redirect_uri" \
+  --name my-metalstats \
   metalstats
 ```
 
