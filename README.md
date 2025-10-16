@@ -37,7 +37,7 @@ docker run -d \
   -e SPOTIFY_CLIENT_ID="spotify_client_id" \
   -e SPOTIFY_CLIENT_SECRET="spotify_client_secret" \
   -e SPOTIFY_REDIRECT_URI="spotify_redirect_uri" \
-  --name my-metalstats \
+  --name metalstats \
   metalstats
 ```
 
