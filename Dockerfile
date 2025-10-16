@@ -8,13 +8,11 @@ ENV METALSTATS_DATA_DIR=/data
 
 WORKDIR /app
 
-COPY pyproject.toml ./
+COPY . .
 
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir hatchling && \
     pip install --no-cache-dir .
-
-COPY . .
 
 RUN mkdir -p ${METALSTATS_DATA_DIR}
 
