@@ -6,8 +6,6 @@ ENV PYTHONUNBUFFERED=1
 ENV SPOTIFY_REDIRECT_URI=http://localhost:8000/callback
 ENV METALSTATS_DATA_DIR=/data
 
-WORKDIR /app
-
 COPY . .
 
 RUN pip install --no-cache-dir --upgrade pip && \
@@ -18,4 +16,4 @@ RUN mkdir -p ${METALSTATS_DATA_DIR}/images
 
 EXPOSE 8000
 
-CMD ["uvicorn", "metalstats.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "metalstats.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers"]
