@@ -14,7 +14,6 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir hatchling && \
     pip install --no-cache-dir .
 
-RUN mkdir -p ${METALSTATS_DATA_DIR}
 RUN mkdir -p ${METALSTATS_DATA_DIR}/images
 
 EXPOSE 8000
