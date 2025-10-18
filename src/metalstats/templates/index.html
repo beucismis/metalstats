@@ -2,11 +2,14 @@
 {% block title %}MetalStats - Create a Topster-style canvas of your top Spotify music{% endblock %}
 {% block main %}
     <div class="container">
-        <div id="login-prompt" style="display: none; margin-top: 1rem; margin-bottom: 1rem;">
+        <div id="login-prompt"
+             style="display: none;
+                    margin-top: 1rem;
+                    margin-bottom: 1rem">
             <p>You need to login first to create a canvas.</p>
         </div>
         <div id="canvas-generator">
-        <p>Select your preferences and click "Generate Canvas" to create your image.</p>
+            <p>Select your preferences and click "Generate Canvas" to create your image.</p>
             <form id="canvas-form">
                 <label for="type">Type:</label>
                 <select name="type" id="type">
@@ -22,16 +25,19 @@
                 </select>
                 <label for="limit">Limit:</label>
                 <input type="number" name="limit" id="limit" value="10" min="1" max="50">
-                <br/>
+                <br />
                 <button class="action-button" type="submit">Generate Canvas</button>
             </form>
             <div id="canvas-container"></div>
             <div id="share-controls" style="display: none; margin-top: 1rem;">
                 <input type="checkbox" id="anonymous-share">
                 <label for="anonymous-share">Anonymously</label>
-                </br>
-                <button type="button" id="share-button" class="action-button" style="margin-left: 10px;">Share to Showcase</button>
-                <p id="share-status"></p>
-            </div>
-</div>
+            </br>
+            <button type="button"
+                    id="share-button"
+                    class="action-button"
+                    style="margin-left: 10px">Share to Showcase</button>
+            <p id="share-status"></p>
+        </div>
+    </div>
 {% endblock %}
