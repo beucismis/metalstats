@@ -46,5 +46,5 @@ Documentation = "https://github.com/beucismis/metalstats#readme"
 path = "src/metalstats/__about__.py"
 
 [tool.hatch.envs.default.scripts]
-format = "black -l 120 ."
+format = "black -l 120 . && djlint . --reformat --format-css"
 dev = "PYTHONPATH=src METALSTATS_DATA_DIR=data/ SPOTIFY_CLIENT_ID=0 SPOTIFY_CLIENT_SECRET=0 uvicorn src.metalstats.main:app --reload"
