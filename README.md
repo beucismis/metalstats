@@ -53,4 +53,4 @@ Once the service is running, you can access the API at `http://localhost:8000`.
 
 ## License
 
-`metalstats` is distributed under the terms of the [MIT](LICENSE.txt) license.
+`metalstats` is distributed under the terms of the [AGPL-3.0](LICENSE.txt) license.
